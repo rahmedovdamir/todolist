@@ -21,7 +21,7 @@ void show_menu() {
 
 void add_task() {
     string new_task;
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.ignore();
     cout << "Введите задачу: " << endl;
     getline(cin, new_task);
 
@@ -184,4 +184,60 @@ void add_note() {
     }
 
     cout << "Заметка добавлена к задаче " << now << "!\n";
+}
+void find_task(){
+	// открыть файл , записать в массив вектор , проходить по каждой из задачей , если сторовокй функцией поиск штдекса того что он ищет != 0 то мы выводим эту функнкию + все её заметки.
+	std::ifstream in("task.txt");
+    if (!in) {
+        cout << "Файл не открылся или задач нет.\n";
+        return;
+    }
+    std::vector<std::vector<string>> all;
+    string current_task;
+    int currtask = -1;
+    while (getline(in, current_task)) {
+        if (!current_task.empty()) {
+            if (currtask == -1 || all.empty()) {
+                all.push_back({});
+                currtask++;
+            }
+            all[currtask].push_back(current_task);
+        }
+        else if (currtask >= 0) {
+            all.push_back({});
+            currtask++;
+        }
+    }
+	in.close();
+	std::cout << "Введите поиск задачи\n";
+	string new_find;
+    cin.ignore();
+    getline(cin, new_find);
+
+    if (all.empty() || (all.size() == 1 && all[0].empty())) {
+        cout << "Нет задач для отображения.\n";
+        return;
+    }
+	int flag = 0;
+	for (size_t i = 0; i < all.size(); ++i){
+        if (!all[i].empty()) {
+            size_t pos = all[i][0].find(new_find);
+            if (pos != std::string::npos) {
+                flag = 1;
+                std::cout << "Задача [" << i << "]: " << all[i][0] << "\n";
+
+                if (all[i].size() > 1) {
+                    std::cout << "Заметки:\n";
+                    for (size_t j = 1; j < all[i].size(); ++j) {
+                        std::cout << "  - " << all[i][j] << "\n";
+                    }
+                } else {
+                    std::cout << " (нет заметок)\n";
+                }
+            }
+        }
+	}   
+	if (flag == 0){
+		std::cout << "Такой задачи не найдено, увы...\n";
+	}
 }

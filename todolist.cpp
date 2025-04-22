@@ -16,6 +16,9 @@ int main(){
             case 3:
                 add_note();
                 break;
+            case 4:
+                find_task();
+                break;
             case 5:
                 delete_task();
                 break;
